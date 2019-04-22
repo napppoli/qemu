@@ -1,0 +1,1 @@
+/home/hayashi/numa_qemu/qemu/tests/fp/Makefile

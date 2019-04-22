@@ -357,11 +357,12 @@ host_memory_backend_memory_complete(UserCreatable *uc, Error **errp)
          * cuts off the last specified node. This means backend->host_nodes
          * must have MAX_NODES+1 bits available.
          */
+	const long unsigned int my_node_mask = 0x111;
         assert(sizeof(backend->host_nodes) >=
                BITS_TO_LONGS(MAX_NODES + 1) * sizeof(unsigned long));
         assert(maxnode <= MAX_NODES);
-        if (mbind(ptr, sz, backend->policy,
-                  maxnode ? backend->host_nodes : NULL, maxnode + 1, flags)) {
+        if (mbind(ptr, sz, MPOL_INTERLEAVE,
+                  maxnode ? &my_node_mask : NULL, maxnode + 1, flags)) {
             if (backend->policy != MPOL_DEFAULT || errno != ENOSYS) {
                 error_setg_errno(errp, errno,
                                  "cannot bind memory to host NUMA nodes");
